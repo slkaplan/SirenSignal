@@ -1,22 +1,53 @@
 % starting to find FFT of police siren
-[y,Fs] = audioread('C:\Users\skaplan1\Documents\GitHub\SirenSignal\sounds\police.wav');
+[y,Fs] = audioread('C:\Users\skaplan1\Documents\GitHub\SirenSignal\sounds\test_signal.wav');
 % sound(y,Fs);
 
 N = length(y);
-spectrum_police = fftshift(fft(y));
-spectrum2 = avg_spectrum(spectrum_police)
+test_signal = fftshift(fft(y));
+% spectrum2 = avg_spectrum(spectrum_police)
 freqs_hz = linspace(-Fs*pi , Fs*(pi - 2*pi/N), N) + Fs*pi/N*mod(N,2);
 
-plot(freqs_hz, abs(spectrum_police));
+plot(freqs_hz, abs(test_signal), 'o');
 h = ylabel('Amplitude');
-set(h,'FontSize', 18);
 h = xlabel('Frequency rad/s');
-set(h,'FontSize', 18);
 h = title('Raw Power Spectrum');
-set(h, 'FontSize', 18);
 
-figure()
-plot(freqs_hz, abs(spectrum2));
+%% Test signal test
+[y,Fs] = audioread('C:\Users\skaplan1\Documents\GitHub\SirenSignal\sounds\test_signal.wav');
+N = length(y);
+test_signal = fftshift(fft(y));
+freqs_hz = linspace(-Fs*pi , Fs*(pi - 2*pi/N), N) + Fs*pi/N*mod(N,2);
+copy = test_signal;
+len = length(total_spectrums)
+diff = []
+for i = 3:length(total_spectrums)
+    signal = total_spectrums{i,1};
+    signal_len = length(signal);
+    signal_freq = linspace(-Fs*pi , Fs*(pi - 2*pi/signal_len), signal_len) + Fs*pi/signal_len*mod(signal_len,2);
+    copy = test_signal;
+    figure()
+    hold on;
+    plot(freqs_hz, abs(test_signal), 'o');
+    plot(signal_freq, abs(signal), 'or');
+    ylabel('Amplitude');
+    xlabel('Frequency rad/s');
+    title('Frequency Comparision');
+    hold off;
+    
+    if (signal_len > N)
+        B = zeros(signal_len,1);
+        B(1:size(copy,1)) = copy;
+        copy = B;
+    else
+        B = zeros(N,1);
+        B(1:size(signal,1)) = signal;
+        signal = B;
+    end
+    diff = [diff, mean(abs(copy - signal))]
+end
+
+
+
 
 %% Loading all definition frequencies
 myDir = ['C:\Users\skaplan1\Documents\GitHub\SirenSignal\sounds'];	% sets working directory (not transferable)
